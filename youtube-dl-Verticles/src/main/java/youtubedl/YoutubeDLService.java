@@ -25,7 +25,7 @@ public class YoutubeDLService
 
 	private void init()
 	{
-		YoutubeDL.setExecutablePath(exePath);
+	//	YoutubeDL.setExecutablePath(exePath);
 	}
 
 	public List<VideoFormat> getFormatList(String videoID)

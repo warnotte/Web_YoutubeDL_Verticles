@@ -1,0 +1,393 @@
+<html>
+
+<head>
+
+<script type="text/javascript"
+	src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
+
+<script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+
+<link rel="stylesheet"
+	href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"
+	integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T"
+	crossorigin="anonymous">
+<script
+	src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"
+	integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM"
+	crossorigin="anonymous"></script>
+
+<!-- Font awesome -->
+<script src="https://kit.fontawesome.com/708b9cae7d.js"
+	crossorigin="anonymous"></script>
+
+<style>
+
+body {
+background-color:#556;
+background-image: linear-gradient(30deg, #445 12%, transparent 12.5%, transparent 87%, #445 87.5%, #445),
+linear-gradient(150deg, #445 12%, transparent 12.5%, transparent 87%, #445 87.5%, #445),
+linear-gradient(30deg, #445 12%, transparent 12.5%, transparent 87%, #445 87.5%, #445),
+linear-gradient(150deg, #445 12%, transparent 12.5%, transparent 87%, #445 87.5%, #445),
+linear-gradient(60deg, #99a 25%, transparent 25.5%, transparent 75%, #99a 75%, #99a),
+linear-gradient(60deg, #99a 25%, transparent 25.5%, transparent 75%, #99a 75%, #99a);
+background-size:80px 140px;
+background-position: 0 0, 0 0, 40px 70px, 40px 70px, 0 0, 40px 70px;
+
+
+}
+
+#contenu {
+border-radius: 10px 10px 10px 10px;
+background-color: #FFFFFFFF;
+box-shadow: 10px 10px 5px 0px rgba(0,0,0,0.75);
+}
+
+</style>
+
+</head>
+
+<body>
+	<br>
+	<br>
+	<div class="container" id="contenu">
+		<h1>Welcome to the test</h1>
+
+
+		<div class="container-fluid">
+			<div class="row">
+			<div class="col-md-10">
+				<div class="card">
+
+						<div class="card-header"><i class="fa fa-plus" aria-hidden="true"></i> Video infos</div>
+
+						<div class="card-body">
+
+							<form id="additem">
+								<div class="form-group container-fluid">
+									<div class="row">
+										
+										<label class="col-sm-6" for="name"><i class="fa fa-users" aria-hidden="true"></i> Video Id</label> <input
+											class="col-sm-6" type="text" name="videoid" value="dQw4w9WgXcQ" id="videoid"> <br>
+									</div>
+									<div class="row">
+										<label class="col-sm-6" for="age"><i class="fa fa-clock-o" aria-hidden="true"></i> Format</label> <input
+											class="col-sm-6" type="text" name="format" value="" id="format">
+										<br>
+									</div>
+									
+									<br>
+									
+								</div>
+
+							</form>
+
+						</div>
+
+
+<div class="card">
+
+						<div class="card-header"><i class="fa fa-plus" aria-hidden="true"></i> Format available</div>
+
+						<div class="card-body" id="formatsbox" >
+						
+							formats 
+						</div>
+						</div>
+
+
+
+					</div>
+
+			</div>
+			
+			<div class="col-md-2">
+			
+				<div class="card">
+
+						<div class="card-header"><i class="fa fa-cog" aria-hidden="true"></i> Operations</div>
+
+						<div class="card-body">
+			
+				<div class="btn-group-vertical" style="width:100%;">
+				<button class="btn btn-primary" onclick='getFormats();' id="button_getformats">Get Formats</button>
+				&nbsp;
+				<button class="btn btn-danger" onclick='downloadVideo();' id="button_download"'>Download</button>
+				&nbsp;
+				<button class="btn btn-primary" onclick='reinitAllDog();'>Reset DB</button>
+				
+				</div>
+				</div>
+				
+				</div>
+				
+				
+				
+				
+			</div>
+
+
+		</div>
+		</div>
+
+
+		<br> <br>
+
+		<div class="container-fluid">
+
+			<div class="row">
+				
+				<div class="col">
+				
+				
+				<div class="card">
+				<div class="card-header"><i class="fa fa-cog" aria-hidden="true"></i> Messages</div>
+				<div class="card-body">
+							<div id="alertbox"></div>
+				</div>
+				</div>
+				
+				</div>
+				
+			</div>
+			
+
+			
+			
+
+		</div>
+
+	</div>
+
+</body>
+
+<script>
+
+	
+	
+	
+$( "form#additem" ).on( "submit", function( event ) {
+		  event.preventDefault();
+		  console.log( $( this ).serializeArray() );
+		  
+		  name = $(this).find("input[id='name']").val();
+		  race = $(this).find("input[id='race']").val();
+		  age = parseInt($(this).find("input[id='age']").val());
+		  
+		  insertItem(name, race, age);
+		  
+	});
+	
+	$( "form#edititem" ).on( "submit", function( event ) {
+		  event.preventDefault();
+		  console.log( $( this ).serializeArray() );
+		  
+		  id = $(this).find("input[id='id']").val();
+		  name = $(this).find("input[id='name']").val();
+		  race = $(this).find("input[id='race']").val();
+		  age = parseInt($(this).find("input[id='age']").val());
+		  
+		  editItem(id, name, race, age);
+
+	});
+	
+	
+	function removeOneDog(id) {
+		
+		$.ajax({
+		    url: "/api/v1/dogs/"+id,
+		    method: 'DELETE',
+		    
+		    success: function(result) {
+		    	addAlert("Operation : "+result);
+				updateTable();
+		    },
+		    error: function(request,msg,error) {
+		    	addAlert("Error in removeOneDog "+msg+" - "+error, "alert-danger");
+		    }
+		});
+		
+		
+	}
+	
+	function reinitAllDog() {
+		$.post("/api/v1/dogs/reinitAll/dogs").done(function(data) {
+			addAlert("Operation : "+data);
+			updateTable();
+		}).fail(function() {
+			addAlert("Error in removeAllDogs", "alert-danger");
+		});
+	}
+	
+
+	function editItem(id, name, race, age) {
+		
+		$.ajax({
+		    url: "/api/v1/dogs/"+id,
+		    method: 'PUT',
+		    data : JSON.stringify({
+		    	"name" : name,
+				"race" : race,
+				"age" : age
+			}),
+		    success: function(result) {
+		    	addAlert("Operation : "+result);
+				updateTable();
+		    },
+		    error: function(request,msg,error) {
+		    	addAlert("Error in removeOneDog "+msg+" - "+error, "alert-danger");
+		    }
+		});
+
+	}
+	
+	function insertItem(name, race, age) {
+		$.post("/api/v1/dogs", JSON.stringify({
+			"name" : name,
+			"race" : race,
+			"age" : age
+		})).done(function(data) {
+			addAlert("Element "+name+" added");
+			updateTable();
+		}).fail(function() {
+			addAlert("Error in insert", "alert-danger");
+		});
+	}
+	
+	function addAlert(message, classe='alert-info') {
+		div = ('<div class="alert '+classe+' alert-dismissible fade show" role="alert">'
+				+ message + 
+				'<button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button></div>');
+		
+		$("#alertbox").append(div);
+	}
+
+
+	function downloadVideo() {
+		videoid = $( "form#additem" ).find("input[id='videoid']").val();
+		videoformat = $( "form#additem" ).find("input[id='format']").val();
+		
+		if (videoid==null)
+		{
+			addAlert("No video id entered");
+			return;
+		}
+
+		
+		addAlert("Downloading ...");
+		$('#button_download').prop('disabled', true);
+		
+		var jqxhr = $.ajax("/api/v1/youtubedl/get/"+videoid, {
+			dataType : "html"
+		}).done(function(data) {
+			
+			addAlert("Popuping the video : "+data);
+			
+			window.open("/api/v1/youtubedl/download/"+videoid);
+
+		}).fail(function() {
+			addAlert("Error fetching datas", "alert-danger");
+			
+			
+		}).always(function() {
+			//  alert( "complete" );
+			$('#button_download').prop('disabled', false);
+		});
+
+		
+		
+		
+		/*
+		
+		
+		
+		
+		var url = "/api/v1/youtubedl/get/"+videoid;
+		
+		
+		
+		window.open(url);*/
+	}
+	
+	function getFormats() {
+
+		videoid = $( "form#additem" ).find("input[id='videoid']").val();
+		
+		if (videoid==null)
+		{
+			addAlert("No video id entered");
+			return;
+		}
+
+		$("#formatsbox").text("Fetching file format ...");
+		
+		$('#button_getformats').prop('disabled', true);
+		
+		var jqxhr = $.ajax("/api/v1/youtubedl/format/"+videoid, {
+			dataType : "html"
+		}).done(function(data) {
+			
+			$("#formatsbox").html(data);
+
+		}).fail(function() {
+			addAlert("Error fetching datas", "alert-danger");
+			$("#formatsbox").text("Error fetching datas :(");
+			
+		}).always(function() {
+			//  alert( "complete" );
+			$('#button_getformats').prop('disabled', false);
+		});
+
+	}
+
+	function JSONToTable(data) {
+		//var thead = $("#table_example").find("thead");
+		var tbody = $("#table_example").find("tbody");
+
+		//thead.empty();
+		tbody.empty();
+		
+		if (data.length==0)
+		{
+			tbody.text("Database is empty!");
+		}
+		
+/*		// Get Table headers and print
+		for (var k = 0; k < Object.keys(data[0]).length; k++) {
+			thead.append('<th>' + Object.keys(data[0])[k] + '</th>');
+		}
+*/
+//		thead.append('<th>Operation</th>');
+		
+		// Get table body and print
+		for (var i = 0; i < Object.keys(data).length; i++) {
+			tbody.append('<tr>');
+			for (var j = 0; j < Object.keys(data[0]).length; j++) {
+				tbody.append('<td>' + data[i][Object.keys(data[0])[j]]
+						+ '</td>');
+			}
+			
+			tbody.append('<td>'+
+					'<i class="far fa-edit" onclick="posteditOneDog(\''+data[i].id+'\', \''+data[i].name+'\', \''+data[i].race+'\', '+data[i].age+');"/>'+
+					'&nbsp;'+
+					'<i class="far fa-trash-alt" onclick="removeOneDog(\''+data[i].id+'\');"/>'+
+					'</td>');
+			
+			tbody.append('</tr>');
+		}
+	}
+	
+	function posteditOneDog(id, name, race, age)
+	{
+		$( "form#edititem" ).find("input[id='id']").val(id);
+		$( "form#edititem" ).find("input[id='name']").val(name);
+		$( "form#edititem" ).find("input[id='race']").val(race);
+		$( "form#edititem" ).find("input[id='age']").val(age);
+	}
+	
+	function deleteAllNotifications()
+	{
+		$("#alertbox").text("");
+	}
+</script>
+
+</html>

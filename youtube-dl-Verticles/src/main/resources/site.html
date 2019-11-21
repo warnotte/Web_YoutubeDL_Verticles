@@ -290,6 +290,8 @@ $( "#videoid" ).keypress(function() {
 
 		$("#formatsbox").text("Fetching file format ...");
 		
+		var tbody = $("#table_example").find("tbody").empty();
+
 		$('#button_getformats').prop('disabled', true);
 		
 		var jqxhr = $.ajax("/api/v1/youtubedl/format/"+videoid, {

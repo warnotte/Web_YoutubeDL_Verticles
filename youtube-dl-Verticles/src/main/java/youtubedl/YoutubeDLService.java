@@ -22,7 +22,7 @@ public class YoutubeDLService
 
 	private void init()
 	{
-		YoutubeDL.setExecutablePath(exePath);
+	//	YoutubeDL.setExecutablePath(exePath);
 	}
 
 	public String getFormatList(String videoID)
@@ -37,7 +37,6 @@ public class YoutubeDLService
 		YoutubeDLRequest request = new YoutubeDLRequest(videoUrl, directory);
 		request.setOption("ignore-errors"); // --ignore-errors
 		request.setOption("output", "%(id)s"); // --output "%(id)s"
-		request.setOption("output", "video.mp4"); // --output "%(id)s"
 		request.setOption("retries", 10); // --retries 10
 
 		String				texte	= "";

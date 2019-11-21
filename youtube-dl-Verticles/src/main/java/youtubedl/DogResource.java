@@ -5,8 +5,14 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.util.ArrayList;
+import java.util.List;
+
+import com.sapher.youtubedl.mapper.VideoFormat;
 
 import io.vertx.core.Vertx;
+import io.vertx.core.json.Json;
+import io.vertx.core.json.JsonObject;
 import io.vertx.core.logging.Logger;
 import io.vertx.core.logging.LoggerFactory;
 import io.vertx.ext.web.Router;
@@ -28,14 +34,17 @@ public class DogResource {
     // Routes
     subRouter.get("/").handler(this::getHomePage);
     subRouter.get("/download/:id").handler(this::downloadAMovie);
-    subRouter.get("/get/:id").handler(this::getAMovie);
+    subRouter.get("/get/:id/").handler(this::getAMovie);
+    subRouter.get("/get/:id/:format").handler(this::getAMovie);
     subRouter.get("/format/:id").handler(this::getMovieFormat);
     
     return subRouter;
   }
 
   private void getAMovie(final RoutingContext routingContext) {
-	    LOGGER.info("Dans getAllDogs...");
+	  LOGGER.info("Dans getAllDogs...");
+	    
+	  LOGGER.info(routingContext.request().toString());
 
 	    String id = routingContext.request().getParam("id");
 	    String format = routingContext.request().getParam("format");
@@ -51,8 +60,9 @@ public class DogResource {
 
 	    System.err.println("Id = "+id);
 	    
-
-	    boolean ret = dogService.getVideo(id, format);
+	    String filename = String.format("%s_%s.mkv",id, format);
+	    
+	    boolean ret = dogService.getVideo(id, format, "tmp/"+filename);
 	    if (ret ==false) {
 	   	 
 	        routingContext.response()
@@ -62,17 +72,20 @@ public class DogResource {
 	        return;
 	    }
 	    
+	    System.err.println("Sending to client : "+filename);
 	    
-	    routingContext.response().setStatusCode(200).end("Downloaded finely");
+	    // Probleme sous linux avec l'extension...
+	    // routingContext.response().setStatusCode(200).end(filename);
+	    routingContext.response().setStatusCode(200).end(filename);
 	    
-	   
 	  }
+  
   
   private void downloadAMovie(final RoutingContext routingContext) {
 	  
 	  String id = routingContext.request().getParam("id");
 	  
-	  routingContext.response().sendFile("tmp/"+id+".mp4").end();
+	  routingContext.response().sendFile("tmp/"+id).end();
   }
   
   
@@ -93,14 +106,37 @@ public class DogResource {
 	    
 	    System.err.println("Id = "+id);
 	    
+
+	//    routingContext.response().setStatusCode(200).end(formatList);
+		
+	    List<VideoFormat> formatList = dogService.getFormatList(id);
+	  
+	    List<MyVideoFormatResult> mvfrs;
+	    mvfrs = convert(formatList);
 	    
-	    String formatList = dogService.getFormatList(id);
-	    routingContext.response().setStatusCode(200).end(formatList);
+	    
+	 //		Création et remplissage de la réponse
+	 		final JsonObject jsonResponse = new JsonObject();
+	 		jsonResponse.put("formats", mvfrs);
+	 		jsonResponse.put("my-name", "Wax78");
+
+	 		// Envoi de la réponse
+	 		routingContext.response().setStatusCode(200).putHeader("content-type", "application/json").end(Json.encodePrettily(jsonResponse));
+	 		
 	    
 	   
 	  }
 
-  private void getOneDog(final RoutingContext routingContext) {
+  private List<MyVideoFormatResult> convert(List<VideoFormat> formatList) {
+	  List<MyVideoFormatResult> ret = new ArrayList<>();
+	for (int i = 0; i < formatList.size(); i++) {
+		ret.add(new MyVideoFormatResult(formatList.get(i)));
+		
+	}
+	return ret;
+}
+
+private void getOneDog(final RoutingContext routingContext) {
     /*LOGGER.info("Dans getOneDog...");
 
     final String id = routingContext.request().getParam("id");

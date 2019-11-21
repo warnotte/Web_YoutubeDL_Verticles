@@ -9,6 +9,9 @@ import com.sapher.youtubedl.YoutubeDLRequest;
 import com.sapher.youtubedl.YoutubeDLResponse;
 import com.sapher.youtubedl.mapper.VideoFormat;
 
+import io.vertx.core.json.Json;
+import io.vertx.core.json.JsonObject;
+
 public class YoutubeDLService
 {
 
@@ -22,10 +25,10 @@ public class YoutubeDLService
 
 	private void init()
 	{
-	//	YoutubeDL.setExecutablePath(exePath);
+		YoutubeDL.setExecutablePath(exePath);
 	}
 
-	public String getFormatList(String videoID)
+	public List<VideoFormat> getFormatList(String videoID)
 	{
 		// Video url to download
 		String videoUrl = "https://www.youtube.com/watch?v=" + videoID;
@@ -40,7 +43,7 @@ public class YoutubeDLService
 		request.setOption("retries", 10); // --retries 10
 
 		String				texte	= "";
-		List<VideoFormat>	formats;
+		List<VideoFormat>	formats = null;
 		try
 		{
 			formats = YoutubeDL.getFormats(videoUrl);
@@ -58,11 +61,18 @@ public class YoutubeDLService
 			texte = e.getMessage();
 		}
 
-		return texte;
+		
+		
+		List<VideoFormat> dogs = formats;
+
+		
+		
+		
+		return dogs;
 
 	}
 
-	public boolean getVideo(String videoID, String videoFormat)
+	public boolean getVideo(String videoID, String videoFormat, String filename)
 	{
 		System.err.println("Video id = "+videoID);
 		// Video url to download
@@ -74,14 +84,17 @@ public class YoutubeDLService
 		// Build request
 		YoutubeDLRequest request = new YoutubeDLRequest(videoUrl, directory);
 		request.setOption("ignore-errors"); // --ignore-errors
-		request.setOption("output", "tmp/%(id)s.mp4"); // --output "%(id)s"
+		request.setOption("output", filename); // --output "%(id)s"
 		//request.setOption("output", "tmp/video.mp4"); // --output "%(id)s"
 		request.setOption("retries", 10); // --retries 10
+		
+		
+		
 		
 		System.err.println("Video format : "+videoFormat);
 		
 		if (videoFormat!=null)
-			request.setOption("f", videoFormat); // --retries 10
+			request.setOption("format", videoFormat); // --retries 10
 		
 		// Make request and return response
 		try

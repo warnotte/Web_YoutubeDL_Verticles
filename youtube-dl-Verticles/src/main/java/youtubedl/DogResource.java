@@ -118,7 +118,7 @@ public class DogResource {
 	 //		Création et remplissage de la réponse
 	 		final JsonObject jsonResponse = new JsonObject();
 	 		jsonResponse.put("formats", mvfrs);
-	 		jsonResponse.put("my-name", "Wax78");
+	 		jsonResponse.put("my-name", "eomyname");
 
 	 		// Envoi de la réponse
 	 		routingContext.response().setStatusCode(200).putHeader("content-type", "application/json").end(Json.encodePrettily(jsonResponse));

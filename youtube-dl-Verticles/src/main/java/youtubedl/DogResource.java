@@ -81,7 +81,7 @@ public class DogResource {
 
 		String id = routingContext.request().getParam("id");
 
-		routingContext.response().sendFile("tmp/" + MD5(id)).end();
+		routingContext.response().sendFile("tmp/" + /*MD5*/(id)).end();
 	}
 
 	private String MD5(String id) {

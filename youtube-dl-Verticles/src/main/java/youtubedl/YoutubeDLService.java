@@ -32,6 +32,7 @@ public class YoutubeDLService
 	{
 		// Video url to download
 		String videoUrl = "https://www.youtube.com/watch?v=" + videoID;
+		videoUrl = videoID;
 
 		// Destination directory
 		String directory = ".";
@@ -77,7 +78,8 @@ public class YoutubeDLService
 		System.err.println("Video id = "+videoID);
 		// Video url to download
 		String videoUrl = "https://www.youtube.com/watch?v=" + videoID;
-
+		videoUrl = videoID;
+		
 		// Destination directory
 		String directory = ".";
 
@@ -105,6 +107,7 @@ public class YoutubeDLService
 			        System.out.println(String.valueOf(progress) + "%");
 			    }
 			});
+			
 		} catch (YoutubeDLException e)
 		{
 			e.printStackTrace();

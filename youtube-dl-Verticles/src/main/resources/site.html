@@ -112,7 +112,7 @@ body {
 									<div class="row">
 
 										<label class="col-sm-6" for="name"><i
-											class="fa fa-users" aria-hidden="true"></i> Video Id</label> <input
+											class="fa fa-users" aria-hidden="true"></i> Video URL</label> <input
 											class="col-sm-6" type="text" name="videoid"
 											value="dQw4w9WgXcQ" id="videoid"> <br>
 									</div>
@@ -233,6 +233,8 @@ $( "#videoid" ).keypress(function() {
 			return;
 		}
 		
+		videoid = encodeURIComponent(videoid);
+		
 		if (!videoformat) 
 		{
 			addAlert("No videoformat id entered");
@@ -279,12 +281,15 @@ $( "#videoid" ).keypress(function() {
 
 		videoid = $( "form#additem" ).find("input[id='videoid']").val();
 		
+		
 		if (videoid==null)
 		{
 			addAlert("No video id entered");
 			return;
 		}
 
+		videoid = encodeURIComponent(videoid);
+		
 		$("#formatsbox").text("Fetching file format ...");
 		
 		var tbody = $("#table_example").find("tbody").empty();

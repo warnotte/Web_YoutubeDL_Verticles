@@ -111,15 +111,15 @@ body {
 								<div class="form-group container-fluid">
 									<div class="row">
 
-										<label class="col-sm-6" for="name"><i
+										<label class="col-sm-4" for="name"><i
 											class="fa fa-users" aria-hidden="true"></i> Video URL</label> <input
-											class="col-sm-6" type="text" name="videoid"
-											value="dQw4w9WgXcQ" id="videoid"> <br>
+											class="col-sm-8" type="text" name="videoid"
+											value="https://www.youtube.com/watch?v=fEtxlfvhjXg" id="videoid"> <br>
 									</div>
 									<div class="row">
-										<label class="col-sm-6" for="age"><i
+										<label class="col-sm-4" for="age"><i
 											class="fa fa-clock-o" aria-hidden="true"></i> Format</label> <input
-											class="col-sm-6" type="text" name="format" value=""
+											class="col-sm-8" type="text" name="format" value=""
 											id="format"> <br>
 									</div>
 
@@ -249,9 +249,13 @@ $( "#videoid" ).keypress(function() {
 			dataType : "text"
 		}).done(function(data) {
 			
-			addAlert("Popuping the video : "+data);
+			//addAlert("Popuping the video : "+data);
 			
-			window.open("/api/v1/youtubedl/download/"+data);
+			var link = "/api/v1/youtubedl/download/"+data;
+			addAlert("<a href='"+link+"'>Download</a> the video");
+			
+			//window.open("/api/v1/youtubedl/download/"+data);
+			
 
 		}).fail(function() {
 			addAlert("Error fetching datas", "alert-danger");

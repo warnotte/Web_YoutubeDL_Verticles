@@ -1,10 +1,10 @@
 package youtubedl;
 
 import java.io.BufferedReader;
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.security.MessageDigest;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -61,14 +61,21 @@ public class DogResource {
 
 		String filename = String.format("%s_%s.mkv", MD5(id), format);
 
-		boolean ret = dogService.getVideo(id, format, "tmp/" + filename);
-		if (ret == false) {
-
-			routingContext.response().setStatusCode(404).putHeader("content-type", "text")
-					.end("Problem downloading the movie");
-			return;
+		// TODO : Look in tmp if the file exists or not 
+		
+		if (new File("tmp/"+filename).exists()==false)
+		{
+			boolean ret = dogService.getVideo(id, format, "tmp/" + filename);
+			if (ret == false) {
+	
+				routingContext.response().setStatusCode(404).putHeader("content-type", "text")
+						.end("Problem downloading the movie");
+				return;
+			}
 		}
-
+		else
+			System.err.println("Already downloaded !!!");
+		
 		System.err.println("Sending to client : " + filename);
 
 		// Probleme sous linux avec l'extension...
@@ -110,12 +117,12 @@ public class DogResource {
 		List<MyVideoFormatResult> mvfrs;
 		mvfrs = convert(formatList);
 
-		// Création et remplissage de la réponse
+		// Crï¿½ation et remplissage de la rï¿½ponse
 		final JsonObject jsonResponse = new JsonObject();
 		jsonResponse.put("formats", mvfrs);
 		jsonResponse.put("my-name", "eomyname");
 
-		// Envoi de la réponse
+		// Envoi de la rï¿½ponse
 		routingContext.response().setStatusCode(200).putHeader("content-type", "application/json")
 				.end(Json.encodePrettily(jsonResponse));
 

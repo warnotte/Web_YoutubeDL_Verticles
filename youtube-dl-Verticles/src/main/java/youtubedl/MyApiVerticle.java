@@ -20,8 +20,12 @@ public class MyApiVerticle extends AbstractVerticle {
     final Router router = Router.router(vertx);
     final DogResource dogResource = new DogResource();
     final Router dogSubRouter = dogResource.getSubRouter(vertx);
-    router.mountSubRouter("/api/v1/youtubedl", dogSubRouter);
-    router.mountSubRouter("/api/v1/pageguarde", dogSubRouter);
+    final MainResource mainResource = new MainResource();
+    final Router dogMainRouter = mainResource.getSubRouter(vertx);
+    
+    router.mountSubRouter("/", dogMainRouter);
+    router.mountSubRouter("/getvideo/v1/youtubedl", dogSubRouter);
+    router.mountSubRouter("/getvideo/v1/pageguarde", dogSubRouter);
     
     vertx.createHttpServer().requestHandler(router).listen(PORT_LISTENING, IP_LISTENING);
 	/*

@@ -53,8 +53,8 @@ public class YoutubeDLService
 				VideoFormat format = iterator.next();
 
 				texte += format.format + " - " + format.ext +"\r\n<br>";
-				System.err.println(format.format);
-				System.err.println(format.ext);
+				//System.err.println(format.format);
+				//System.err.println(format.ext);
 				
 			}
 		} catch (YoutubeDLException e)
@@ -62,13 +62,8 @@ public class YoutubeDLService
 			texte = e.getMessage();
 		}
 
-		
-		
 		List<VideoFormat> dogs = formats;
 
-		
-		
-		
 		return dogs;
 
 	}

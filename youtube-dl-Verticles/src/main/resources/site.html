@@ -121,6 +121,8 @@ body {
 											class="fa fa-clock-o" aria-hidden="true"></i> Format</label> <input
 											class="col-sm-8" type="text" name="format" value=""
 											id="format"> <br>
+											
+											
 									</div>
 
 								</div>
@@ -186,18 +188,10 @@ body {
 								
 							</div>
 						</div>
-
 					</div>
-
-
-
-
 				</div>
-
-
 			</div>
 		</div>
-
 
 		<br> <br> <br />
 
@@ -245,13 +239,13 @@ $( "#videoid" ).keypress(function() {
 		addAlert("Downloading ... with format "+videoformat);
 		$('#button_download').prop('disabled', true);
 		
-		var jqxhr = $.ajax("/api/v1/youtubedl/get/"+videoid+"/"+videoformat, {
+		var jqxhr = $.ajax("/getvideo/v1/youtubedl/get/"+videoid+"/"+videoformat, {
 			dataType : "text"
 		}).done(function(data) {
 			
 			//addAlert("Popuping the video : "+data);
 			
-			var link = "/api/v1/youtubedl/download/"+data;
+			var link = "/getvideo/v1/youtubedl/download/"+data;
 			addAlert("<a href='"+link+"'>Download</a> the video");
 			
 			//window.open("/api/v1/youtubedl/download/"+data);
@@ -285,6 +279,7 @@ $( "#videoid" ).keypress(function() {
 
 		videoid = $( "form#additem" ).find("input[id='videoid']").val();
 		
+		$("input#format").val("");
 		
 		if (videoid==null)
 		{
@@ -300,7 +295,7 @@ $( "#videoid" ).keypress(function() {
 
 		$('#button_getformats').prop('disabled', true);
 		
-		var jqxhr = $.ajax("/api/v1/youtubedl/format/"+videoid, {
+		var jqxhr = $.ajax("/getvideo/v1/youtubedl/format/"+videoid, {
 			dataType : "json"
 		}).done(function(data) {
 			var jsonPretty = JSON.stringify(data, null, '\t');
@@ -333,32 +328,34 @@ $( "#videoid" ).keypress(function() {
 		{
 			tbody.text("Database is empty!");
 		}
-		
-	/*	// Get Table headers and print
-		for (var k = 0; k < Object.keys(data[0]).length; k++) {
-			thead.append('<th>' + Object.keys(data[0])[k] + '</th>');
-		}*/
-
-//		thead.append('<th>Operation</th>');
-		
+	
 		// Get table body and print
 		for (var i = 0; i < Object.keys(data).length; i++) {
-			tbody.append('<tr>');
-			for (var j = 0; j < Object.keys(data[0]).length; j++) {
-				tbody.append('<td>' + data[i][Object.keys(data[0])[j]]
-						+ '</td>');
-			}
+			var idformat = data[i][Object.keys(data[0])[0]];
+			//tbody.append('<tr onclick="selectFormat('+idformat+');">');
 			
-			/*tbody.append('<td>'+
-					'<i class="far fa-edit" onclick="posteditOneDog(\''+data[i].id+'\', \''+data[i].name+'\', \''+data[i].race+'\', '+data[i].age+');"/>'+
-					'&nbsp;'+
-					'<i class="far fa-trash-alt" onclick="removeOneDog(\''+data[i].id+'\');"/>'+
-					'</td>');
-			*/
-			tbody.append('</tr>');
+			var tr = document.createElement("TR"); //  onclick='selectFormat(idformat);'
+			tr.onclick = (function (idformat) {
+				return function() { 
+					selectFormat(idformat);
+					};
+				})(idformat);
+			
+			for (var j = 0; j < Object.keys(data[0]).length; j++) {
+				var td = document.createElement("TD");
+				td.appendChild(document.createTextNode(data[i][Object.keys(data[0])[j]]));
+				//tbody.append('<td  onclick="selectFormat('+idformat+');">' + data[i][Object.keys(data[0])[j]]+ '</td>');
+				tr.appendChild(td);
+			}
+			tbody.append(tr);
 		}
 	}
 	
+	function selectFormat(id)
+	{
+		$("input#format").val(id);
+	}
+		
 	function deleteAllNotifications()
 	{
 		$("#alertbox").text("");

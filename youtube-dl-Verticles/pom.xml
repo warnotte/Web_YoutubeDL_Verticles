@@ -10,9 +10,10 @@
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<maven.compiler.source>9</maven.compiler.source>
 		<maven.compiler.target>9</maven.compiler.target>
-		<vertx.version>3.8.3</vertx.version>
+		<vertx.version>4.1.4</vertx.version>
 		<project.mainclass1>youtubedl.App</project.mainclass1>
 	</properties>
+
 
 
 <build>

@@ -36,6 +36,7 @@ public class DogResource {
 		// Routes
 		subRouter.get("/").handler(this::getHomePage);
 		subRouter.get("/download/:id").handler(this::downloadAMovie);
+		// TODO : BlockingHandler ???
 		subRouter.get("/get/:id/").handler(this::getAMovie);
 		subRouter.get("/get/:id/:format").handler(this::getAMovie);
 		subRouter.get("/format/:id").handler(this::getMovieFormat);
@@ -52,7 +53,7 @@ public class DogResource {
 		String format = routingContext.request().getParam("format");
 
 		if (id == null) {
-
+			
 			routingContext.response().setStatusCode(404).putHeader("content-type", "text").end("No id passed");
 			return;
 		}
@@ -88,7 +89,8 @@ public class DogResource {
 
 		String id = routingContext.request().getParam("id");
 
-		routingContext.response().sendFile("tmp/" + /*MD5*/(id)).end();
+		//routingContext.response().sendFile("tmp/" + /*MD5*/(id)).end();
+		routingContext.response().sendFile("tmp/" + /*MD5*/(id)).result();
 	}
 
 	private String MD5(String id) {

@@ -114,15 +114,16 @@ body {
 										<label class="col-sm-4" for="name"><i
 											class="fa fa-users" aria-hidden="true"></i> Video URL</label> <input
 											class="col-sm-8" type="text" name="videoid"
-											value="https://www.youtube.com/watch?v=fEtxlfvhjXg" id="videoid"> <br>
+											value="https://www.youtube.com/watch?v=fEtxlfvhjXg"
+											id="videoid"> <br>
 									</div>
 									<div class="row">
 										<label class="col-sm-4" for="age"><i
 											class="fa fa-clock-o" aria-hidden="true"></i> Format</label> <input
 											class="col-sm-8" type="text" name="format" value=""
 											id="format"> <br>
-											
-											
+
+
 									</div>
 
 								</div>
@@ -139,6 +140,36 @@ body {
 					</div>
 
 					<br />
+
+
+				</div>
+
+				<div class="col-md-5">
+
+					<div class="card">
+
+						<div class="card-header">
+							<i class="fa fa-cog" aria-hidden="true"></i> Operations
+						</div>
+
+						<div class="card-body">
+
+							<div class="btn-group-vertical" style="width: 100%;">
+								<button class="btn btn-primary" onclick='getFormats();'
+									id="button_getformats">Get Formats</button>
+								&nbsp;
+								<button class="btn btn-danger" onclick='downloadVideo();'
+									id="button_download"'>Download</button>
+
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+
+
+			<div class="row">
+				<div class="col">
 					<div class="card">
 
 						<div class="card-header">
@@ -166,38 +197,18 @@ body {
 
 						</table>
 					</div>
-
-				</div>
-
-				<div class="col-md-5">
-
-					<div class="card">
-
-						<div class="card-header">
-							<i class="fa fa-cog" aria-hidden="true"></i> Operations
-						</div>
-
-						<div class="card-body">
-
-							<div class="btn-group-vertical" style="width: 100%;">
-								<button class="btn btn-primary" onclick='getFormats();'
-									id="button_getformats">Get Formats</button>
-								&nbsp;
-								<button class="btn btn-danger" onclick='downloadVideo();'
-									id="button_download"'>Download</button>
-								
-							</div>
-						</div>
-					</div>
 				</div>
 			</div>
+
 		</div>
 
 		<br> <br> <br />
 
 	</div>
 
-<br> <br> <br />
+	<br>
+	<br>
+	<br />
 
 </body>
 

@@ -2,6 +2,8 @@ package youtubedl;
 import java.util.Iterator;
 import java.util.List;
 
+import org.apache.commons.lang3.SystemUtils;
+
 import com.sapher.youtubedl.DownloadProgressCallback;
 import com.sapher.youtubedl.YoutubeDL;
 import com.sapher.youtubedl.YoutubeDLException;
@@ -25,7 +27,17 @@ public class YoutubeDLService
 
 	private void init()
 	{
-		YoutubeDL.setExecutablePath(exePath);
+		
+		if (SystemUtils.IS_OS_WINDOWS)
+		{
+			YoutubeDL.setExecutablePath(exePath);
+			System.err.println("OS : Windows");
+		}
+		else
+		{
+			System.err.println("OS : Linux");
+		}
+		
 	}
 
 	public List<VideoFormat> getFormatList(String videoID)

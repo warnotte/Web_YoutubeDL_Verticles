@@ -40,7 +40,7 @@ public class DogResource {
 		subRouter.get("/get/:id/").handler(this::getAMovie);
 		subRouter.get("/get/:id/:format").handler(this::getAMovie);
 		subRouter.get("/format/:id").handler(this::getMovieFormat);
-
+		
 		return subRouter;
 	}
 

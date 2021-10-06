@@ -1,0 +1,4 @@
+function miam()
+{
+alert('toto');
+}

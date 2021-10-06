@@ -4,90 +4,122 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.util.Iterator;
+import java.util.List;
 
 import io.vertx.core.Vertx;
 import io.vertx.core.logging.Logger;
 import io.vertx.core.logging.LoggerFactory;
+import io.vertx.ext.web.Route;
 import io.vertx.ext.web.Router;
 import io.vertx.ext.web.RoutingContext;
 import io.vertx.ext.web.Session;
 import io.vertx.ext.web.handler.BodyHandler;
 import io.vertx.ext.web.handler.SessionHandler;
+import io.vertx.ext.web.handler.StaticHandler;
 import io.vertx.ext.web.sstore.LocalSessionStore;
 import io.vertx.ext.web.sstore.SessionStore;
 
 public class MainResource {
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(MainResource.class);
-	private Session session;
+	private static Session session;
 
 	
 	
 	public Router getSubRouter(final Vertx vertx) {
 		final Router subRouter = Router.router(vertx);
-
+		
 		// Body handler
 		subRouter.route("/*").handler(BodyHandler.create());
+	    subRouter.route("/*").handler(StaticHandler.create()); // -> shit sous linux ??!
+
 		// Body handler
-		subRouter.post("/sucks").handler(this::getTryLoginPage);
+		//subRouter.post("/sucks").handler(this::getTryLoginPage);
+		subRouter.post("/").handler(this::getTryLoginOutPage);
+		
 		// Body handler
-		subRouter.get("/sucks").handler(this::getSuxPage);
+		//subRouter.get("/sucks").handler(this::getLoginPage);
 
 		// Routes
-		subRouter.get("/").handler(this::getHomePage);
+		subRouter.get("/").handler(this::getLoginPage);
 
 	    SessionStore store=LocalSessionStore.create(vertx);
 	    session = store.createSession(30000);
 	    subRouter.route().handler(SessionHandler.create(store));
 	    
-		
+
+	    List<Route> routes = subRouter.getRoutes();
+	    for (Iterator iterator = routes.iterator(); iterator.hasNext();) {
+			Route route = (Route) iterator.next();
+			System.err.println("Route : "+route);
+		}
+	    
 		return subRouter;
 	}
 
-	private void getTryLoginPage(RoutingContext routingContext) {
+	private void getTryLoginOutPage(RoutingContext routingContext) {
 		
-		LOGGER.info("Dans TryLogin...");
+		LOGGER.info("Dans TryLoginOut...");
 		
-		
-		String name = routingContext.request().getFormAttribute("name");
-		if (name.equals("waxpolo"))
+		if (isLogged()==false)
 		{
-			LOGGER.info("Session Put");
-			//Session session = routingContext.session();
-			session.put("logged", "true");
-			routingContext.redirect("/sucks");
+			String name = routingContext.request().getFormAttribute("name");
+			
+			if (name.equals("waxpolo"))
+			{
+				LOGGER.info("Login");
+				session.put("logged", "true");
+				
+				routingContext.redirect("/getvideo/v1/pageguarde");
+			}
+			else
+			{
+				routingContext.redirect("/");
+			}
 		}
+		else
+		{
+			LOGGER.info("Logout");
+			session.put("logged", "false");
+			routingContext.redirect("/");
+		}
+		
+		
+		
 		//routingContext.response().setStatusCode(200).putHeader("content-type", "text/html").end("AIE");
 		
 
 	}
 
-	private void getSuxPage(RoutingContext routingContext) {
+	private void getLoginPage(RoutingContext routingContext) {
 
 		try {
-			boolean isLogged = isLogged(routingContext);
+			boolean isLogged = isLogged();
 
 			LOGGER.info("Dans getSuxPage... from a logged : " + isLogged);
 
-			String file = readFromInputStream(getClass().getResourceAsStream("/login.html"));
-			// LOGGER.info(file);
-			// Envoi de la rÃ©ponse
-			routingContext.response().setStatusCode(200).putHeader("content-type", "text/html").end(isLogged+"<br>"+file);
+			String file = "";
+			if (isLogged==false)
+				file = readFromInputStream(getClass().getResourceAsStream("/login.html"));
+			else
+				file = readFromInputStream(getClass().getResourceAsStream("/logout.html"));
+			//	Envoi de la réponse
+			
+			file = readFromInputStream(getClass().getResourceAsStream("/head.html"))+file;
+			file += readFromInputStream(getClass().getResourceAsStream("/foot.html"));
+			
+			routingContext.response().setStatusCode(200).putHeader("content-type", "text/html").end(file);
 
 		} catch (Exception e) {
-
-			// Envoi de la rÃ©ponse
+			// Envoi de la réponse
 			routingContext.response().setStatusCode(404).putHeader("content-type", "text/html").end(e.toString());
-
 			e.printStackTrace();
 		}
 
 	}
 
-	private boolean isLogged(RoutingContext routingContext) {
-		//Session session = routingContext.session();
-		//if (session == null)
-		//	return false;
+	public static boolean isLogged() {
 		boolean logged = Boolean.parseBoolean(session.get("logged"));
 		return logged;
 	}
@@ -98,11 +130,11 @@ public class MainResource {
 		try {
 			String file = readFromInputStream(getClass().getResourceAsStream("/main.html"));
 			// LOGGER.info(file);
-			// Envoi de la rÃ©ponse
+			// Envoi de la réponse
 			routingContext.response().setStatusCode(200).putHeader("content-type", "text/html").end(file);
 		} catch (Exception e) {
 
-			// Envoi de la rÃ©ponse
+			// Envoi de la réponse
 			routingContext.response().setStatusCode(404).putHeader("content-type", "text/html").end(e.toString());
 
 			e.printStackTrace();

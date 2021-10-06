@@ -10,6 +10,7 @@ import java.util.List;
 
 import org.apache.commons.codec.digest.DigestUtils;
 
+import com.sapher.youtubedl.YoutubeDLException;
 import com.sapher.youtubedl.mapper.VideoFormat;
 
 import io.vertx.core.Vertx;
@@ -34,17 +35,60 @@ public class DogResource {
 		subRouter.route("/*").handler(BodyHandler.create());
 
 		// Routes
-		subRouter.get("/").handler(this::getHomePage);
-		subRouter.get("/download/:id").handler(this::downloadAMovie);
+		subRouter.get("/").handler(event -> {
+			try {
+				getHomePage(event);
+			} catch (Exception e) {
+				event.response().setStatusCode(404).putHeader("content-type", "text").end("Invalid User");
+				//event.redirect("/");
+				e.printStackTrace();
+			}
+		});
+		subRouter.get("/download/:id").handler(event -> {
+			try {
+				downloadAMovie(event);
+			} catch (InvalidUserException e) {
+				event.response().setStatusCode(404).putHeader("content-type", "text").end("Invalid User");
+				//event.redirect("/");
+				e.printStackTrace();
+			}
+		});
 		// TODO : BlockingHandler ???
-		subRouter.get("/get/:id/").handler(this::getAMovie);
-		subRouter.get("/get/:id/:format").handler(this::getAMovie);
-		subRouter.get("/format/:id").handler(this::getMovieFormat);
+		subRouter.get("/get/:id/").handler(event -> {
+			try {
+				getAMovie(event);
+			} catch (InvalidUserException e1) {
+				event.response().setStatusCode(404).putHeader("content-type", "text").end("Invalid User");
+				//event.redirect("/");
+				e1.printStackTrace();
+			}
+		});
+		subRouter.get("/get/:id/:format").handler(event -> {
+			try {
+				getAMovie(event);
+			} catch (InvalidUserException e1) {
+				event.response().setStatusCode(404).putHeader("content-type", "text").end("Invalid User");
+				//event.redirect("/");
+				e1.printStackTrace();
+			}
+		});
+		subRouter.get("/format/:id").handler(event -> {
+			try {
+				getMovieFormat(event);
+			} catch (InvalidUserException e) {
+				event.response().setStatusCode(404).putHeader("content-type", "text").end("Invalid User");
+				//event.redirect("/");
+				e.printStackTrace();
+			}
+		});
 		
 		return subRouter;
 	}
 
-	private void getAMovie(final RoutingContext routingContext) {
+	private void getAMovie(final RoutingContext routingContext) throws InvalidUserException {
+		
+		checkUserIsvalide();
+		
 		LOGGER.info("Dans getAllDogs...");
 
 		LOGGER.info(routingContext.request().toString());
@@ -66,13 +110,19 @@ public class DogResource {
 		
 		if (new File("tmp/"+filename).exists()==false)
 		{
-			boolean ret = dogService.getVideo(id, format, "tmp/" + filename);
-			if (ret == false) {
-	
-				routingContext.response().setStatusCode(404).putHeader("content-type", "text")
-						.end("Problem downloading the movie");
+			boolean ret;
+			try {
+				ret = dogService.getVideo(id, format, "tmp/" + filename);
+				if (ret == false) {
+					routingContext.response().setStatusCode(404).putHeader("content-type", "text").end("Problem downloading the movie");
+					return;
+				}
+			} catch (YoutubeDLException e) {
+				routingContext.response().setStatusCode(404).putHeader("content-type", "text").end(e.getMessage());
+				e.printStackTrace();
 				return;
 			}
+			
 		}
 		else
 			System.err.println("Already downloaded !!!");
@@ -85,8 +135,21 @@ public class DogResource {
 
 	}
 
-	private void downloadAMovie(final RoutingContext routingContext) {
+	private void checkUserIsvalide() throws InvalidUserException {
+		
+		if (MainResource.isLogged())
+		{
+			LOGGER.debug(MainResource.session.get("name"));
+			return;
+		}
+		throw new InvalidUserException("Nononono!");
+		
+	}
 
+	private void downloadAMovie(final RoutingContext routingContext) throws InvalidUserException {
+
+		checkUserIsvalide();
+		
 		String id = routingContext.request().getParam("id");
 
 		//routingContext.response().sendFile("tmp/" + /*MD5*/(id)).end();
@@ -99,7 +162,10 @@ public class DogResource {
 		return md5Hex;
 	}
 
-	private void getMovieFormat(final RoutingContext routingContext) {
+	private void getMovieFormat(final RoutingContext routingContext) throws InvalidUserException {
+		
+		checkUserIsvalide();
+		
 		LOGGER.info("Dans getMovieFormat...");
 
 		String id = routingContext.request().getParam("id");
@@ -158,11 +224,19 @@ public class DogResource {
 		 */
 	}
 
-	private void getHomePage(RoutingContext routingContext) {
+	private void getHomePage(RoutingContext routingContext) throws InvalidUserException {
+		
+		checkUserIsvalide();
+		
 		LOGGER.info("Dans homepage...");
 
 		try {
 			String file = readFromInputStream(getClass().getResourceAsStream("/site.html"));
+			
+			file = readFromInputStream(getClass().getResourceAsStream("/head.html"))+file;
+			file += readFromInputStream(getClass().getResourceAsStream("/logout.html"));
+			file += readFromInputStream(getClass().getResourceAsStream("/foot.html"));
+			
 			// LOGGER.info(file);
 			// Envoi de la réponse
 			routingContext.response().setStatusCode(200).putHeader("content-type", "text/html").end(file);

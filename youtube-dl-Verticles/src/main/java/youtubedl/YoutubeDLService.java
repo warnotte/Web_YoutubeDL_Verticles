@@ -80,7 +80,7 @@ public class YoutubeDLService
 
 	}
 
-	public boolean getVideo(String videoID, String videoFormat, String filename)
+	public boolean getVideo(String videoID, String videoFormat, String filename) throws YoutubeDLException
 	{
 		System.err.println("Video id = "+videoID);
 		// Video url to download
@@ -106,8 +106,8 @@ public class YoutubeDLService
 			request.setOption("format", videoFormat); // --retries 10
 		
 		// Make request and return response
-		try
-		{
+		//try
+		//{
 			YoutubeDLResponse response = YoutubeDL.execute(request, new DownloadProgressCallback() {
 			    @Override
 			    public void onProgressUpdate(float progress, long etaInSeconds) {
@@ -115,11 +115,11 @@ public class YoutubeDLService
 			    }
 			});
 			
-		} catch (YoutubeDLException e)
+		/*} catch (YoutubeDLException e)
 		{
 			e.printStackTrace();
 			return false;
-		}
+		}*/
 
 		System.err.println("OK");
 		return true;

@@ -23,7 +23,7 @@ import io.vertx.ext.web.sstore.SessionStore;
 public class MainResource {
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(MainResource.class);
-	private static Session session;
+	public static Session session;
 
 	
 	
@@ -32,21 +32,18 @@ public class MainResource {
 		
 		// Body handler
 		subRouter.route("/*").handler(BodyHandler.create());
-	    subRouter.route("/*").handler(StaticHandler.create()); // -> shit sous linux ??!
 
 		// Body handler
 		//subRouter.post("/sucks").handler(this::getTryLoginPage);
 		subRouter.post("/").handler(this::getTryLoginOutPage);
 		
-		// Body handler
-		//subRouter.get("/sucks").handler(this::getLoginPage);
-
 		// Routes
 		subRouter.get("/").handler(this::getLoginPage);
 
 	    SessionStore store=LocalSessionStore.create(vertx);
 	    session = store.createSession(30000);
 	    subRouter.route().handler(SessionHandler.create(store));
+	    
 	    
 
 	    List<Route> routes = subRouter.getRoutes();
@@ -70,6 +67,7 @@ public class MainResource {
 			{
 				LOGGER.info("Login");
 				session.put("logged", "true");
+				session.put("name", name);
 				
 				routingContext.redirect("/getvideo/v1/pageguarde");
 			}
@@ -81,7 +79,9 @@ public class MainResource {
 		else
 		{
 			LOGGER.info("Logout");
+			
 			session.put("logged", "false");
+			session.put("name", "");
 			routingContext.redirect("/");
 		}
 		

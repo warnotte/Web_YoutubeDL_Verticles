@@ -5,9 +5,7 @@ import io.vertx.core.AbstractVerticle;
 import io.vertx.core.logging.Logger;
 import io.vertx.core.logging.LoggerFactory;
 import io.vertx.ext.web.Router;
-import io.vertx.ext.web.handler.SessionHandler;
-import io.vertx.ext.web.sstore.LocalSessionStore;
-import io.vertx.ext.web.sstore.SessionStore;
+import io.vertx.ext.web.handler.StaticHandler;
 
 public class MyApiVerticle extends AbstractVerticle {
   private static final Logger LOGGER = LoggerFactory.getLogger(MyApiVerticle.class);
@@ -27,9 +25,9 @@ public class MyApiVerticle extends AbstractVerticle {
     final Router dogMainRouter = mainResource.getSubRouter(vertx);
     
     router.mountSubRouter("/", dogMainRouter);
+    router.route("/*").handler(StaticHandler.create()); // -> shit sous linux ??!
     router.mountSubRouter("/getvideo/v1/youtubedl", dogSubRouter);
     router.mountSubRouter("/getvideo/v1/pageguarde", dogSubRouter);
-
     
     
     vertx.createHttpServer().requestHandler(router).listen(PORT_LISTENING, IP_LISTENING);

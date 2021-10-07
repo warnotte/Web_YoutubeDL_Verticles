@@ -7,22 +7,22 @@ import java.io.InputStreamReader;
 import java.util.Iterator;
 import java.util.List;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 import io.vertx.core.Vertx;
-import io.vertx.core.logging.Logger;
-import io.vertx.core.logging.LoggerFactory;
 import io.vertx.ext.web.Route;
 import io.vertx.ext.web.Router;
 import io.vertx.ext.web.RoutingContext;
 import io.vertx.ext.web.Session;
 import io.vertx.ext.web.handler.BodyHandler;
 import io.vertx.ext.web.handler.SessionHandler;
-import io.vertx.ext.web.handler.StaticHandler;
 import io.vertx.ext.web.sstore.LocalSessionStore;
 import io.vertx.ext.web.sstore.SessionStore;
 
 public class MainResource {
 
-	private static final Logger LOGGER = LoggerFactory.getLogger(MainResource.class);
+	private static final Logger LOGGER = LogManager.getLogger(MainResource.class);
 	public static Session session;
 
 	
@@ -49,7 +49,7 @@ public class MainResource {
 	    List<Route> routes = subRouter.getRoutes();
 	    for (Iterator iterator = routes.iterator(); iterator.hasNext();) {
 			Route route = (Route) iterator.next();
-			System.err.println("Route : "+route);
+			LOGGER.info("Route : "+route);
 		}
 	    
 		return subRouter;
@@ -104,7 +104,7 @@ public class MainResource {
 				file = readFromInputStream(getClass().getResourceAsStream("/login.html"));
 			else
 				file = readFromInputStream(getClass().getResourceAsStream("/logout.html"));
-			//	Envoi de la réponse
+			//	Envoi de la rï¿½ponse
 			
 			file = readFromInputStream(getClass().getResourceAsStream("/head.html"))+file;
 			file += readFromInputStream(getClass().getResourceAsStream("/foot.html"));
@@ -112,7 +112,7 @@ public class MainResource {
 			routingContext.response().setStatusCode(200).putHeader("content-type", "text/html").end(file);
 
 		} catch (Exception e) {
-			// Envoi de la réponse
+			// Envoi de la rï¿½ponse
 			routingContext.response().setStatusCode(404).putHeader("content-type", "text/html").end(e.toString());
 			e.printStackTrace();
 		}
@@ -130,11 +130,11 @@ public class MainResource {
 		try {
 			String file = readFromInputStream(getClass().getResourceAsStream("/main.html"));
 			// LOGGER.info(file);
-			// Envoi de la réponse
+			// Envoi de la rï¿½ponse
 			routingContext.response().setStatusCode(200).putHeader("content-type", "text/html").end(file);
 		} catch (Exception e) {
 
-			// Envoi de la réponse
+			// Envoi de la rï¿½ponse
 			routingContext.response().setStatusCode(404).putHeader("content-type", "text/html").end(e.toString());
 
 			e.printStackTrace();

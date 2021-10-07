@@ -16,15 +16,17 @@ import com.sapher.youtubedl.mapper.VideoFormat;
 import io.vertx.core.Vertx;
 import io.vertx.core.json.Json;
 import io.vertx.core.json.JsonObject;
-import io.vertx.core.logging.Logger;
-import io.vertx.core.logging.LoggerFactory;
 import io.vertx.ext.web.Router;
 import io.vertx.ext.web.RoutingContext;
 import io.vertx.ext.web.handler.BodyHandler;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
+
 public class DogResource {
 
-	private static final Logger LOGGER = LoggerFactory.getLogger(DogResource.class);
+	private static final Logger LOGGER = LogManager.getLogger(DogResource.class);
 
 	private final YoutubeDLService dogService = new YoutubeDLService();
 
@@ -139,7 +141,7 @@ public class DogResource {
 		
 		if (MainResource.isLogged())
 		{
-			LOGGER.debug(MainResource.session.get("name"));
+			LOGGER.info(MainResource.session.get("name").toString());
 			return;
 		}
 		throw new InvalidUserException("Nononono!");

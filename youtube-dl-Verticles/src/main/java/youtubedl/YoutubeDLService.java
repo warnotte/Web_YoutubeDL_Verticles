@@ -3,6 +3,8 @@ import java.util.Iterator;
 import java.util.List;
 
 import org.apache.commons.lang3.SystemUtils;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import com.sapher.youtubedl.DownloadProgressCallback;
 import com.sapher.youtubedl.YoutubeDL;
@@ -11,12 +13,11 @@ import com.sapher.youtubedl.YoutubeDLRequest;
 import com.sapher.youtubedl.YoutubeDLResponse;
 import com.sapher.youtubedl.mapper.VideoFormat;
 
-import io.vertx.core.json.Json;
-import io.vertx.core.json.JsonObject;
-
 public class YoutubeDLService
 {
 
+	private static final Logger LOGGER = LogManager.getLogger(YoutubeDLService.class);
+	
 	static String exePath = "e:\\youtube-dl.exe";
 	
 	public YoutubeDLService()
@@ -31,11 +32,11 @@ public class YoutubeDLService
 		if (SystemUtils.IS_OS_WINDOWS)
 		{
 			YoutubeDL.setExecutablePath(exePath);
-			System.err.println("OS : Windows");
+			LOGGER.info("OS : Windows");
 		}
 		else
 		{
-			System.err.println("OS : Linux");
+			LOGGER.info("OS : Linux");
 		}
 		
 	}
@@ -82,7 +83,7 @@ public class YoutubeDLService
 
 	public boolean getVideo(String videoID, String videoFormat, String filename) throws YoutubeDLException
 	{
-		System.err.println("Video id = "+videoID);
+		LOGGER.info("Try downloading video id = "+videoID);
 		// Video url to download
 		String videoUrl = "https://www.youtube.com/watch?v=" + videoID;
 		videoUrl = videoID;
@@ -100,28 +101,21 @@ public class YoutubeDLService
 		
 		
 		
-		System.err.println("Video format : "+videoFormat);
+		LOGGER.info("Video format : "+videoFormat);
 		
 		if (videoFormat!=null)
 			request.setOption("format", videoFormat); // --retries 10
 		
-		// Make request and return response
-		//try
-		//{
-			YoutubeDLResponse response = YoutubeDL.execute(request, new DownloadProgressCallback() {
-			    @Override
-			    public void onProgressUpdate(float progress, long etaInSeconds) {
-			        System.out.println(String.valueOf(progress) + "%");
-			    }
-			});
-			
-		/*} catch (YoutubeDLException e)
-		{
-			e.printStackTrace();
-			return false;
-		}*/
 
-		System.err.println("OK");
+		YoutubeDLResponse response = YoutubeDL.execute(request, new DownloadProgressCallback() {
+		    @Override
+		    public void onProgressUpdate(float progress, long etaInSeconds) {
+		    	LOGGER.info(String.valueOf(progress) + "%");
+		    }
+		});
+		
+
+		LOGGER.info("Download OK "+videoID+" status : "+response.getExitCode());
 		return true;
 	}
 

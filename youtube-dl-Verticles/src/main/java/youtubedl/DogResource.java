@@ -6,6 +6,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 
 import org.apache.commons.codec.digest.DigestUtils;
@@ -16,6 +17,7 @@ import com.sapher.youtubedl.mapper.VideoFormat;
 import io.vertx.core.Vertx;
 import io.vertx.core.json.Json;
 import io.vertx.core.json.JsonObject;
+import io.vertx.ext.web.Route;
 import io.vertx.ext.web.Router;
 import io.vertx.ext.web.RoutingContext;
 import io.vertx.ext.web.handler.BodyHandler;
@@ -87,6 +89,12 @@ public class DogResource {
 				//e.printStackTrace();
 			}
 		});
+		
+		List<Route> routes = subRouter.getRoutes();
+	    for (Iterator<Route> iterator = routes.iterator(); iterator.hasNext();) {
+			Route route = iterator.next();
+			LOGGER.info("Route : "+route);
+		}
 		
 		return subRouter;
 	}

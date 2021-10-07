@@ -1,10 +1,12 @@
 package youtubedl;
 import java.io.File;
+
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-
 import io.vertx.core.AbstractVerticle;
+import io.vertx.core.http.HttpServerOptions;
+import io.vertx.core.net.JksOptions;
 import io.vertx.ext.web.Router;
 import io.vertx.ext.web.handler.StaticHandler;
 
@@ -13,7 +15,7 @@ public class YoutubeDL_Verticle extends AbstractVerticle {
   
   
 	public static String IP_LISTENING = "0.0.0.0";
-	public static int PORT_LISTENING = 80;
+	public static int PORT_LISTENING = 8080;
 
 	
   @Override
@@ -33,7 +35,13 @@ public class YoutubeDL_Verticle extends AbstractVerticle {
     router.mountSubRouter("/getvideo/v1/youtubedl", dogSubRouter);
     router.mountSubRouter("/getvideo/v1/pageguarde", dogSubRouter);
     
-    vertx.createHttpServer()
+    HttpServerOptions options = new HttpServerOptions();/*
+    	    .setUseAlpn(true)
+    	    .setSsl(true)
+    	    .setKeyStoreOptions(new JksOptions().setPath("clientkeystore").setPassword("1969Prodigy"));
+    */
+    options.setLogActivity(true);
+    vertx.createHttpServer(options)
     	.requestHandler(router)
     	.listen(PORT_LISTENING, IP_LISTENING)
     	.onSuccess(server -> {

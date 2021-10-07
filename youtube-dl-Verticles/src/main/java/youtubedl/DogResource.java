@@ -41,18 +41,20 @@ public class DogResource {
 			try {
 				getHomePage(event);
 			} catch (Exception e) {
-				event.response().setStatusCode(404).putHeader("content-type", "text").end("Invalid User");
+				event.response().setStatusCode(404).putHeader("content-type", "text").end("Invalid User : "+e.getMessage());
 				//event.redirect("/");
-				e.printStackTrace();
+				LOGGER.warn("Invalid User : "+e.getMessage());
+				//e.printStackTrace();
 			}
 		});
 		subRouter.get("/download/:id").handler(event -> {
 			try {
 				downloadAMovie(event);
 			} catch (InvalidUserException e) {
-				event.response().setStatusCode(404).putHeader("content-type", "text").end("Invalid User");
+				event.response().setStatusCode(404).putHeader("content-type", "text").end("Invalid User : "+e.getMessage());
 				//event.redirect("/");
-				e.printStackTrace();
+				LOGGER.warn("Invalid User : "+e.getMessage());
+				//e.printStackTrace();
 			}
 		});
 		// TODO : BlockingHandler ???
@@ -60,27 +62,29 @@ public class DogResource {
 			try {
 				getAMovie(event);
 			} catch (InvalidUserException e1) {
-				event.response().setStatusCode(404).putHeader("content-type", "text").end("Invalid User");
+				event.response().setStatusCode(404).putHeader("content-type", "text").end("Invalid User : "+e1.getMessage());
 				//event.redirect("/");
-				e1.printStackTrace();
+				LOGGER.warn("Invalid User : "+e1.getMessage());
+				//e1.printStackTrace();
 			}
 		});
 		subRouter.get("/get/:id/:format").handler(event -> {
 			try {
 				getAMovie(event);
 			} catch (InvalidUserException e1) {
-				event.response().setStatusCode(404).putHeader("content-type", "text").end("Invalid User");
+				event.response().setStatusCode(404).putHeader("content-type", "text").end("Invalid User : "+e1.getMessage());
 				//event.redirect("/");
-				e1.printStackTrace();
+				LOGGER.warn("Invalid User : "+e1.getMessage());
+				//e1.printStackTrace();
 			}
 		});
 		subRouter.get("/format/:id").handler(event -> {
 			try {
 				getMovieFormat(event);
 			} catch (InvalidUserException e) {
-				event.response().setStatusCode(404).putHeader("content-type", "text").end("Invalid User");
-				//event.redirect("/");
-				e.printStackTrace();
+				event.response().setStatusCode(404).putHeader("content-type", "text").end("Invalid User : "+e.getMessage());
+				LOGGER.warn("Invalid User : "+e.getMessage());
+				//e.printStackTrace();
 			}
 		});
 		
@@ -91,7 +95,7 @@ public class DogResource {
 		
 		checkUserIsvalide();
 		
-		LOGGER.info("Dans getAllDogs...");
+		LOGGER.info("Dans getAMovie...");
 
 		LOGGER.info(routingContext.request().toString());
 
@@ -104,7 +108,7 @@ public class DogResource {
 			return;
 		}
 
-		System.err.println("Id = " + id);
+		LOGGER.info("Id = " + id);
 
 		String filename = String.format("%s_%s.mkv", MD5(id), format);
 
@@ -127,9 +131,9 @@ public class DogResource {
 			
 		}
 		else
-			System.err.println("Already downloaded !!!");
+			LOGGER.info(id+ "Already downloaded !!!");
 		
-		System.err.println("Sending to client : " + filename);
+		LOGGER.info("Sending to client : " + filename);
 
 		// Probleme sous linux avec l'extension...
 		// routingContext.response().setStatusCode(200).end(filename);
@@ -141,7 +145,7 @@ public class DogResource {
 		
 		if (MainResource.isLogged())
 		{
-			LOGGER.info(MainResource.session.get("name").toString());
+			LOGGER.info("User : "+MainResource.session.get("name").toString());
 			return;
 		}
 		throw new InvalidUserException("Nononono!");
@@ -178,7 +182,7 @@ public class DogResource {
 			return;
 		}
 
-		System.err.println("Id = " + id);
+		LOGGER.info("Id = " + id);
 
 		// routingContext.response().setStatusCode(200).end(formatList);
 
@@ -187,12 +191,12 @@ public class DogResource {
 		List<MyVideoFormatResult> mvfrs;
 		mvfrs = convert(formatList);
 
-		// Cr�ation et remplissage de la r�ponse
+		// Création et remplissage de la r�ponse
 		final JsonObject jsonResponse = new JsonObject();
 		jsonResponse.put("formats", mvfrs);
 		jsonResponse.put("my-name", "eomyname");
 
-		// Envoi de la r�ponse
+		// Envoi de la é�ponse
 		routingContext.response().setStatusCode(200).putHeader("content-type", "application/json")
 				.end(Json.encodePrettily(jsonResponse));
 
@@ -205,25 +209,6 @@ public class DogResource {
 
 		}
 		return ret;
-	}
-
-	private void getOneDog(final RoutingContext routingContext) {
-		/*
-		 * LOGGER.info("Dans getOneDog...");
-		 * 
-		 * final String id = routingContext.request().getParam("id");
-		 * 
-		 * final Dog dog = dogService.findById(id);
-		 * 
-		 * if (dog == null) { final JsonObject errorJsonResponse = new JsonObject();
-		 * errorJsonResponse.put("error", "No dog can be found for the specified id:" +
-		 * id); errorJsonResponse.put("id", id);
-		 * 
-		 * routingContext.response() .setStatusCode(404) .putHeader("content-type",
-		 * "application/json") .end(Json.encode(errorJsonResponse)); return; }
-		 * routingContext.response() .setStatusCode(200) .putHeader("content-type",
-		 * "application/json") .end(Json.encode(dog));
-		 */
 	}
 
 	private void getHomePage(RoutingContext routingContext) throws InvalidUserException {
@@ -246,7 +231,7 @@ public class DogResource {
 
 			// Envoi de la réponse
 			routingContext.response().setStatusCode(404).putHeader("content-type", "text/html").end(e.toString());
-
+			LOGGER.fatal(e, e);
 			e.printStackTrace();
 		}
 

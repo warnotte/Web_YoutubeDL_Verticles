@@ -47,8 +47,8 @@ public class MainResource {
 	    
 
 	    List<Route> routes = subRouter.getRoutes();
-	    for (Iterator iterator = routes.iterator(); iterator.hasNext();) {
-			Route route = (Route) iterator.next();
+	    for (Iterator<Route> iterator = routes.iterator(); iterator.hasNext();) {
+			Route route = iterator.next();
 			LOGGER.info("Route : "+route);
 		}
 	    

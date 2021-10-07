@@ -108,9 +108,9 @@
 			
 			$("#formatsbox").html(data);
 
-		}).fail(function() {
-			addAlert("Error fetching datas", "alert-danger");
-			$("#formatsbox").text("Error fetching datas :(");
+		}).fail(function(xhr, textStatus, errorThrown) {
+			addAlert("Error fetching datas : "+xhr.responseText, "alert-danger");
+			$("#formatsbox").text("Error fetching datas :("+xhr.responseText);
 			
 		}).always(function() {
 			//  alert( "complete" );
